@@ -2,18 +2,14 @@ package com.jams.music.player.Dialogs;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
 import com.jams.music.player.Parser.ParseCompleteListener;
 import com.jams.music.player.Parser.WikiArtistInfoParser;
-import com.jams.music.player.Parser.WikiInfo;
-import com.jams.music.player.Parser.WikiHandler.RegexInfo;
 import com.jams.music.player.R;
 
 import java.io.UnsupportedEncodingException;
@@ -26,7 +22,6 @@ import java.util.HashMap;
 public class WikiArtistInfoDialog extends DialogFragment {
     private boolean parseComplete;
     private WikiArtistInfoParser parser;
-    private WikiInfo w;
     private TextView artistInfo;
 
 
@@ -53,19 +48,18 @@ public class WikiArtistInfoDialog extends DialogFragment {
         parser.setParseCompleteListener(new ParseCompleteListener() {
             @Override
             public void onParseComplete(HashMap wikiInfo) {
-                if(wikiInfo == null) {
-                    //TODO: show a view that states the artist cannot be found and perhaps let the user enter another name
+                if(wikiInfo == null || wikiInfo.isEmpty()) {
                     artistInfo.setText("Could not find artist");
                 } else {
-                    //TODO: set all the TextViews with the appropiate artist info
                     if (artistInfo != null) {
-                        String a = "";
-                        for (Object s : wikiInfo.values()) {
-                            a += s.toString();
-                            a += wikiInfo.get(s);
-                            a += "\n";
+                        String info = "";
+                        for (Object s : wikiInfo.keySet()) {
+                            //TODO: Clean up wikiInfo values
+                            info += s.toString();
+                            info += wikiInfo.get(s);
+                            info += "\n";
                         }
-                       artistInfo.setText(a);
+                       artistInfo.setText(info);
                     }
                 }
                 parseComplete = true;
@@ -75,7 +69,6 @@ public class WikiArtistInfoDialog extends DialogFragment {
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        //TODO: create a view with a layout that will display the artist info
         View view = getActivity().getLayoutInflater().inflate(R.layout.fragment_wiki_artist_info, null);
         String artist = getArguments().getString("artist");
         TextView artistName = (TextView) view.findViewById(R.id.wiki_artist_name);
