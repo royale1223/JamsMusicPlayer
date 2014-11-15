@@ -859,5 +859,6 @@
     <string name="folders_layout">Folders Layout</string>
     <string name="select_music_folders">Select Music Folders</string>
     <string name="refresh_music_library">Refresh Music Library</string>
+    <string name="artist_info">Artist info</string>
 
 </resources>
