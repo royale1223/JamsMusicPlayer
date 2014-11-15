@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
  */
 public class WikiHandler extends DefaultHandler {
     private static final String Q_NAME_REV = "rev";
-    private static final String REGEX_INFO_VAL = "(\\s*)=(.*?)(((\\{\\{?)(.*?)(\\}\\}?)(\\s*))|\\|)";
+    private static final String REGEX_INFO_VAL = "(\\s?)=(\\s?)((\\{\\{?)(.*?)(\\}\\}?)|(.*?)\\|)";
     public static enum RegexInfo {
         years_active ("Years Active: "),
         genre ("Genre: "),
@@ -57,7 +57,7 @@ public class WikiHandler extends DefaultHandler {
             reg = Pattern.compile( regName + REGEX_INFO_VAL);
             regMatch = reg.matcher(content);
             if (regMatch.find()) {
-                artistInfo.put(regName.display(), regMatch.group());
+                artistInfo.put(regName.display(), regMatch.group(3));
             }
         }
     }
