@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.view.View;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.jams.music.player.Parser.ParseCompleteListener;
@@ -23,7 +24,7 @@ public class WikiArtistInfoDialog extends DialogFragment {
     private boolean parseComplete;
     private WikiArtistInfoParser parser;
     private TextView artistInfo;
-
+    private SeekBar loadBar;
 
     static public WikiArtistInfoDialog newInstance(String artist) {
         WikiArtistInfoDialog f = new WikiArtistInfoDialog();
@@ -38,11 +39,13 @@ public class WikiArtistInfoDialog extends DialogFragment {
         super.onCreate(savedInstanceState);
         parseComplete = false;
         String artist = getArguments().getString("artist");
-        try {
+        /*try {
             artist = URLEncoder.encode(artist, "UTF-8");
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
-        }
+        }*/
+        artist = artist.replaceAll(" ", "_");
+
         parser = new WikiArtistInfoParser();
         parser.search(artist);
         parser.setParseCompleteListener(new ParseCompleteListener() {
@@ -60,6 +63,7 @@ public class WikiArtistInfoDialog extends DialogFragment {
                             info += "\n";
                         }
                        artistInfo.setText(info);
+                       loadBar.setVisibility(View.GONE);
                     }
                 }
                 parseComplete = true;
@@ -73,8 +77,9 @@ public class WikiArtistInfoDialog extends DialogFragment {
         String artist = getArguments().getString("artist");
         TextView artistName = (TextView) view.findViewById(R.id.wiki_artist_name);
         artistInfo = (TextView) view.findViewById(R.id.wiki_artist_info);
-        artistName.setText(artist);
+        loadBar = (SeekBar) view.findViewById(R.id.seekBar);
 
+        artistName.setText(artist);
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(R.string.artist_info);
         builder.setView(view);

@@ -21,4 +21,10 @@
         android:text="Artist Info"
         android:id="@+id/wiki_artist_info"
         android:layout_gravity="center_horizontal" />
+
+    <SeekBar
+        android:layout_width="33dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/seekBar"
+        android:layout_gravity="center_horizontal" />
 </LinearLayout>

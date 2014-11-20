@@ -228,7 +228,7 @@ public class PlaylistPagerFragment extends Fragment implements AlbumArtLoadedLis
                     goToPopupMenu.setOnMenuItemClickListener(goToMenuClickListener);
                     goToPopupMenu.show();
                     break;
-                case R.id.artist_info:
+                case R.id.wiki_artist_info:
                     String artist = ((Common)getActivity().getApplicationContext()).getService().getCurrentSong().getArtist();
                     FragmentTransaction frag = getActivity().getSupportFragmentManager().beginTransaction();
                     WikiArtistInfoDialog wikiDialog = WikiArtistInfoDialog.newInstance(artist);
