@@ -21,28 +21,16 @@ import java.util.HashMap;
  *
  */
 public class WikiArtistInfoDialog extends DialogFragment {
-    private boolean parseComplete;
     private WikiArtistInfoParser parser;
+    private TextView artistName;
     private TextView artistInfo;
     private SeekBar loadBar;
-
-    static public WikiArtistInfoDialog newInstance(String artist) {
-        WikiArtistInfoDialog f = new WikiArtistInfoDialog();
-        Bundle args = new Bundle();
-        args.putString("artist", artist);
-        f.setArguments(args);
-        return f;
-    }
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        parseComplete = false;
-        String artist = getArguments().getString("artist");
-        artist = artist.replaceAll(" ", "_");
 
         parser = new WikiArtistInfoParser();
-        parser.search(artist);
         parser.setParseCompleteListener(new ParseCompleteListener() {
             @Override
             public void onParseComplete(HashMap wikiInfo) {
@@ -61,7 +49,6 @@ public class WikiArtistInfoDialog extends DialogFragment {
                        loadBar.setVisibility(View.GONE);
                     }
                 }
-                parseComplete = true;
             }
         });
     }
@@ -69,20 +56,21 @@ public class WikiArtistInfoDialog extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         View view = getActivity().getLayoutInflater().inflate(R.layout.fragment_wiki_artist_info, null);
-        String artist = getArguments().getString("artist");
-        TextView artistName = (TextView) view.findViewById(R.id.wiki_artist_name);
+        artistName = (TextView) view.findViewById(R.id.wiki_artist_name);
         artistInfo = (TextView) view.findViewById(R.id.wiki_artist_info);
         loadBar = (SeekBar) view.findViewById(R.id.seekBar);
 
-        artistName.setText(artist);
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(R.string.artist_info);
         builder.setView(view);
         return builder.create();
     }
 
-    public void search(String titles) {
+    public void search(String titles, FragmentTransaction ft) {
+        artistName.setText(titles);
+        String artist = tiles.replace(" ", "_");
+        loadBar.setVisibility(View.VISIBLE);
         parser.search(titles);
-        parseComplete = false;
+        show(ft, "wikiArtistInfo");
     }
 }

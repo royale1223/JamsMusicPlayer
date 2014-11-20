@@ -229,10 +229,13 @@ public class PlaylistPagerFragment extends Fragment implements AlbumArtLoadedLis
                     goToPopupMenu.show();
                     break;
                 case R.id.wiki_artist_info:
+                    WikiArtistInfoDialog wikiDialog = getActivity().getSupportFragmentManager().findFragmentByTag("wikiArtistInfo");
+                    if(wikiDialog == null) {
+                        wikiDialog = new WikiArtistInfoDialog();
+                    }
                     String artist = ((Common)getActivity().getApplicationContext()).getService().getCurrentSong().getArtist();
-                    FragmentTransaction frag = getActivity().getSupportFragmentManager().beginTransaction();
-                    WikiArtistInfoDialog wikiDialog = WikiArtistInfoDialog.newInstance(artist);
-                    wikiDialog.show(frag, "wikiArtistInfo");
+                    FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                    wikiDialog.search(artist, ft);
                     break;
             }
 
