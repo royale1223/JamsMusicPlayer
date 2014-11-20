@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -68,7 +69,7 @@ public class WikiArtistInfoDialog extends DialogFragment {
 
     public void search(String titles, FragmentTransaction ft) {
         artistName.setText(titles);
-        String artist = tiles.replace(" ", "_");
+        String artist = titles.replace(" ", "_");
         loadBar.setVisibility(View.VISIBLE);
         parser.search(titles);
         show(ft, "wikiArtistInfo");
