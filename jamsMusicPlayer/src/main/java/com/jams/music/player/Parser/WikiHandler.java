@@ -1,5 +1,7 @@
 package com.jams.music.player.Parser;
 
+import android.util.Log;
+
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -52,14 +54,43 @@ public class WikiHandler extends DefaultHandler {
     private void parseWikiInfo(String content) {
         Pattern reg;
         Matcher regMatch;
+        String regInfo;
         artistInfo = new HashMap<String, String>();
         for (RegexInfo regName : RegexInfo.values()) {
-            reg = Pattern.compile( regName + REGEX_INFO_VAL);
+            reg = Pattern.compile(regName + REGEX_INFO_VAL);
             regMatch = reg.matcher(content);
             if (regMatch.find()) {
-                artistInfo.put(regName.display(), regMatch.group(3));
+                regInfo = regMatch.group(3).replaceAll("[{,},|,\\[,\\]]","");
+                if(regName.toString() == "birth_date") {
+                    regInfo = formatBirthday(regMatch.group(3));
+                }
+                artistInfo.put(regName.display(), regInfo);
             }
         }
+    }
+
+    private String formatBirthday(String s) {
+        Pattern reg;
+        Matcher regMatch;
+        String birthday = "";
+        String monthFirst = "yes";
+        reg = Pattern.compile("(mf=)(\\w+)");
+        regMatch = reg.matcher(s);
+        if (regMatch.find()) {
+            monthFirst = regMatch.group(2).toLowerCase();
+        }
+
+        reg = Pattern.compile("(\\d{4})\\|(\\d{1,2})\\|(\\d{1,2})");
+        regMatch = reg.matcher(s);
+        if (regMatch.find()) {
+        if (monthFirst.contentEquals("yes")) {
+            birthday = getMonth(regMatch.group(2)) + " " + regMatch.group(3) + " " +
+                regMatch.group(1);
+        } else {
+            birthday = getMonth(regMatch.group(3)) + " " + regMatch.group(2) + " " +
+                    regMatch.group(1);
+        } }
+        return birthday;
     }
 
     private String getMonth(String monthString) {

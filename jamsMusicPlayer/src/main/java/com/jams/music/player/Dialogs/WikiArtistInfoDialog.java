@@ -39,11 +39,6 @@ public class WikiArtistInfoDialog extends DialogFragment {
         super.onCreate(savedInstanceState);
         parseComplete = false;
         String artist = getArguments().getString("artist");
-        /*try {
-            artist = URLEncoder.encode(artist, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }*/
         artist = artist.replaceAll(" ", "_");
 
         parser = new WikiArtistInfoParser();
@@ -89,14 +84,5 @@ public class WikiArtistInfoDialog extends DialogFragment {
     public void search(String titles) {
         parser.search(titles);
         parseComplete = false;
-    }
-
-    @Override
-    public void show(FragmentManager manager, String tag) {
-        if (parseComplete) {
-            super.show(manager, tag);
-        } else {
-            //TODO: show a view that indicates parsing hasn't completed yet
-        }
     }
 }
