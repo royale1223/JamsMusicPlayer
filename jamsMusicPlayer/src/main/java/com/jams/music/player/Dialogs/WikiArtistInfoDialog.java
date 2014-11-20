@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.widget.SeekBar;
@@ -14,14 +13,14 @@ import com.jams.music.player.Parser.ParseCompleteListener;
 import com.jams.music.player.Parser.WikiArtistInfoParser;
 import com.jams.music.player.R;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.HashMap;
 
 /**
  *
  */
 public class WikiArtistInfoDialog extends DialogFragment {
+    private String artist;
+
     private WikiArtistInfoParser parser;
     private TextView artistName;
     private TextView artistInfo;
@@ -30,6 +29,8 @@ public class WikiArtistInfoDialog extends DialogFragment {
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        artist = "";
 
         parser = new WikiArtistInfoParser();
         parser.setParseCompleteListener(new ParseCompleteListener() {
@@ -61,17 +62,20 @@ public class WikiArtistInfoDialog extends DialogFragment {
         artistInfo = (TextView) view.findViewById(R.id.wiki_artist_info);
         loadBar = (SeekBar) view.findViewById(R.id.seekBar);
 
+        artistName.setText(artist);
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(R.string.artist_info);
         builder.setView(view);
         return builder.create();
     }
 
-    public void search(String titles, FragmentTransaction ft) {
-        artistName.setText(titles);
-        String artist = titles.replace(" ", "_");
-        loadBar.setVisibility(View.VISIBLE);
-        parser.search(titles);
+    public void search(String artist, FragmentTransaction ft) {
+        this.artist = artist;
+        if(artistName != null)
+            artistName.setText(artist);
+        if(loadBar != null)
+            loadBar.setVisibility(View.VISIBLE);
+        parser.search(artist.replaceAll(" ", "_"));
         show(ft, "wikiArtistInfo");
     }
 }
