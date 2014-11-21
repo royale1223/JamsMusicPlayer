@@ -78,7 +78,7 @@ public class WikiHandler extends DefaultHandler {
     private String cleanUpInfo(String s, RegexInfo category) {
         Pattern reg;
         Matcher regMatch;
-        String newInfo = "";
+        String newInfo = s;
         switch (category) {
             case birth_date: // Do nothing
                 String monthFirst = "yes";
@@ -104,13 +104,13 @@ public class WikiHandler extends DefaultHandler {
                 Log.i("Wiki", "group: " + s);
 
                 // Regex to remove redundant info.
-                reg = Pattern.compile("(<.*>)|([\\w,' ',.]+\\|)(?:[\\w,\\s,.]+,)?");
+                reg = Pattern.compile("(<.*>)|(\\[[\\w,' ',.]+\\|)");
                 regMatch = reg.matcher(newInfo);
                 while(regMatch.find()) {
                     Log.i("Wiki", "delete: " + regMatch.group());
-                    newInfo.replace(regMatch.group(),"");
+                    newInfo = newInfo.replace(regMatch.group(),"");
                 }
-                newInfo = s.replaceAll("[\\|,{,},*,\\[,\\]]","");
+                newInfo = newInfo.replaceAll("[\\|,{,},*,\\[,\\]]","");
                 break;
         }
         return newInfo;
