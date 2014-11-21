@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
  */
 public class WikiHandler extends DefaultHandler {
     private static final String Q_NAME_REV = "rev";
-    private static final String REGEX_INFO_VAL = "(?:\\s?)=(?:\\s?)(?:(?=.+flat list.+)((?:.|\\n)*?)}}|(?!.+flat list.+)(.*?)\\n)";
+    private static final String REGEX_INFO_VAL = "\\s?=\\s?((?!\\{\\{).*?\\||(?=\\{\\{)(?:.*?\\}\\}\\|))";
     public static enum RegexInfo {
         image (""),
         years_active ("Years Active: "),
@@ -61,12 +61,16 @@ public class WikiHandler extends DefaultHandler {
             reg = Pattern.compile(regName + REGEX_INFO_VAL);
             regMatch = reg.matcher(content);
             if (regMatch.find()) {
-                regInfo = regMatch.group().replaceAll("[{,},|,\\[,\\]]", "");
                 /*if(regName.toString() == "birth_date") {
                     regInfo = formatBirthday(regMatch.group());
                 }*/
-                regInfo = cleanUpInfo(regMatch.group(), regName);
-                artistInfo.put(regName.display(), regInfo);
+                Log.i("Wiki", "Group count:" + regMatch.groupCount() + " " + regMatch.group());
+                regInfo = cleanUpInfo(regMatch.group(1), regName);
+                if (regName.toString() == "image") {
+                    // display img
+                } else {
+                    artistInfo.put(regName.display(), regInfo);
+                }
             }
         }
     }
@@ -76,9 +80,6 @@ public class WikiHandler extends DefaultHandler {
         Matcher regMatch;
         String newInfo = "";
         switch (category) {
-           /* case image: // Format FROM 2015/1/2 | 2015/2/1 TO February 1, 2015
-                newInfo = s;
-                break;*/
             case birth_date: // Do nothing
                 String monthFirst = "yes";
                 reg = Pattern.compile("(mf=)(\\w+)");
@@ -91,23 +92,25 @@ public class WikiHandler extends DefaultHandler {
                 regMatch = reg.matcher(s);
                 if (regMatch.find()) {
                     if (monthFirst.contentEquals("yes")) {
-                        newInfo = getMonth(regMatch.group(2)) + " " + regMatch.group(3) + " " +
+                        newInfo = getMonth(regMatch.group(2)) + " " + regMatch.group(3) + ", " +
                                 regMatch.group(1);
                     } else {
-                        newInfo = getMonth(regMatch.group(3)) + " " + regMatch.group(2) + " " +
+                        newInfo = getMonth(regMatch.group(3)) + " " + regMatch.group(2) + ", " +
                                 regMatch.group(1);
                     }
                 }
                 break;
             default: // Remove references, side notes, and extra brackets/braces.
-                newInfo = s.replaceAll("[{,},*,\\[,\\]]","");
+                Log.i("Wiki", "group: " + s);
 
-                // Regex to remove redundant info. Ex: "Pop music|Pop" becomes "Pop music"
+                // Regex to remove redundant info.
                 reg = Pattern.compile("(<.*>)|([\\w,' ',.]+\\|)(?:[\\w,\\s,.]+,)?");
                 regMatch = reg.matcher(newInfo);
                 while(regMatch.find()) {
+                    Log.i("Wiki", "delete: " + regMatch.group());
                     newInfo.replace(regMatch.group(),"");
                 }
+                newInfo = s.replaceAll("[\\|,{,},*,\\[,\\]]","");
                 break;
         }
         return newInfo;
