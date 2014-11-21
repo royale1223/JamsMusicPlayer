@@ -232,6 +232,7 @@ public class PlaylistPagerFragment extends Fragment implements AlbumArtLoadedLis
                     WikiArtistInfoDialog wikiDialog = (WikiArtistInfoDialog)getActivity().getSupportFragmentManager().findFragmentByTag("wikiArtistInfo");
                     if(wikiDialog == null) {
                         wikiDialog = new WikiArtistInfoDialog();
+                        wikiDialog.onCreate(null);
                     }
                     String artist = ((Common)getActivity().getApplicationContext()).getService().getCurrentSong().getArtist();
                     FragmentTransaction frag = getActivity().getSupportFragmentManager().beginTransaction();
