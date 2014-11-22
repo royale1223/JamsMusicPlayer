@@ -14,8 +14,9 @@ import java.util.regex.Pattern;
  */
 public class WikiHandler extends DefaultHandler {
     private static final String Q_NAME_REV = "rev";
-    private static final String REGEX_INFO_VAL = "(\\s?)=(\\s?)((\\{\\{?)(.*?)(\\}\\}?)|(.*?)\\|)";
+    private static final String REGEX_INFO_VAL = "\\s?=\\s?((?!\\{\\{).*?\\||(?=\\{\\{)(?:.*?\\}\\}\\|))";
     public static enum RegexInfo {
+        image (""),
         years_active ("Years Active: "),
         genre ("Genre: "),
         birth_date ("Birth Date: "),
@@ -60,13 +61,59 @@ public class WikiHandler extends DefaultHandler {
             reg = Pattern.compile(regName + REGEX_INFO_VAL);
             regMatch = reg.matcher(content);
             if (regMatch.find()) {
-                regInfo = regMatch.group(3).replaceAll("[{,},|,\\[,\\]]","");
-                if(regName.toString() == "birth_date") {
-                    regInfo = formatBirthday(regMatch.group(3));
+                /*if(regName.toString() == "birth_date") {
+                    regInfo = formatBirthday(regMatch.group());
+                }*/
+                Log.i("Wiki", "Group count:" + regMatch.groupCount() + " " + regMatch.group());
+                regInfo = cleanUpInfo(regMatch.group(1), regName);
+                if (regName.toString() == "image") {
+                    // display img
+                } else {
+                    artistInfo.put(regName.display(), regInfo);
                 }
-                artistInfo.put(regName.display(), regInfo);
             }
         }
+    }
+
+    private String cleanUpInfo(String s, RegexInfo category) {
+        Pattern reg;
+        Matcher regMatch;
+        String newInfo = s;
+        switch (category) {
+            case birth_date: // Do nothing
+                String monthFirst = "yes";
+                reg = Pattern.compile("(mf=)(\\w+)");
+                regMatch = reg.matcher(s);
+                if (regMatch.find()) {
+                    monthFirst = regMatch.group(2).toLowerCase();
+                }
+
+                reg = Pattern.compile("(\\d{4})\\|(\\d{1,2})\\|(\\d{1,2})");
+                regMatch = reg.matcher(s);
+                if (regMatch.find()) {
+                    if (monthFirst.contentEquals("yes")) {
+                        newInfo = getMonth(regMatch.group(2)) + " " + regMatch.group(3) + ", " +
+                                regMatch.group(1);
+                    } else {
+                        newInfo = getMonth(regMatch.group(3)) + " " + regMatch.group(2) + ", " +
+                                regMatch.group(1);
+                    }
+                }
+                break;
+            default: // Remove references, side notes, and extra brackets/braces.
+                Log.i("Wiki", "group: " + s);
+
+                // Regex to remove redundant info.
+                reg = Pattern.compile("(<.*>)|(\\[[\\w,' ',.]+\\|)");
+                regMatch = reg.matcher(newInfo);
+                while(regMatch.find()) {
+                    Log.i("Wiki", "delete: " + regMatch.group());
+                    newInfo = newInfo.replace(regMatch.group(),"");
+                }
+                newInfo = newInfo.replaceAll("[\\|,{,},*,\\[,\\]]","");
+                break;
+        }
+        return newInfo;
     }
 
     private String formatBirthday(String s) {
@@ -83,13 +130,14 @@ public class WikiHandler extends DefaultHandler {
         reg = Pattern.compile("(\\d{4})\\|(\\d{1,2})\\|(\\d{1,2})");
         regMatch = reg.matcher(s);
         if (regMatch.find()) {
-        if (monthFirst.contentEquals("yes")) {
-            birthday = getMonth(regMatch.group(2)) + " " + regMatch.group(3) + " " +
-                regMatch.group(1);
-        } else {
-            birthday = getMonth(regMatch.group(3)) + " " + regMatch.group(2) + " " +
+            if (monthFirst.contentEquals("yes")) {
+                birthday = getMonth(regMatch.group(2)) + " " + regMatch.group(3) + " " +
                     regMatch.group(1);
-        } }
+            } else {
+                birthday = getMonth(regMatch.group(3)) + " " + regMatch.group(2) + " " +
+                        regMatch.group(1);
+            }
+        }
         return birthday;
     }
 
