@@ -2,10 +2,15 @@ package com.jams.music.player.Dialogs;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -25,6 +30,9 @@ public class WikiArtistInfoDialog extends DialogFragment {
     private TextView artistName;
     private TextView artistInfo;
     private SeekBar loadBar;
+
+    private ImageView imageView;
+    private Bitmap bitmap;
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
@@ -49,6 +57,7 @@ public class WikiArtistInfoDialog extends DialogFragment {
                         }
                        artistInfo.setText(info);
                        loadBar.setVisibility(View.GONE);
+                       imageView.setImageBitmap(bitmap);
                     }
                 }
             }
@@ -58,6 +67,10 @@ public class WikiArtistInfoDialog extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         View view = getActivity().getLayoutInflater().inflate(R.layout.fragment_wiki_artist_info, null);
+        imageView =  (ImageView) view.findViewById(R.id.wiki_image_view);
+
+        //imageView.setImageBitmap(bitmap);
+
         artistName = (TextView) view.findViewById(R.id.wiki_artist_name);
         artistInfo = (TextView) view.findViewById(R.id.wiki_artist_info);
         loadBar = (SeekBar) view.findViewById(R.id.seekBar);
@@ -78,4 +91,9 @@ public class WikiArtistInfoDialog extends DialogFragment {
         parser.search(artist.replaceAll(" ", "_"));
         show(ft, "wikiArtistInfo");
     }
+
+    public void setImage(Bitmap bm){
+        this.bitmap = bm;
+    }
+
 }
