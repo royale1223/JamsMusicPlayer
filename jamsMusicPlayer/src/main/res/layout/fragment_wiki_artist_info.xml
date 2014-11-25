@@ -6,8 +6,8 @@
     android:weightSum="1">
 
     <ImageView
-        android:layout_width="30dp"
-        android:layout_height="30dp"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:id="@+id/wiki_image_view"
         android:layout_gravity="center_horizontal" />
 

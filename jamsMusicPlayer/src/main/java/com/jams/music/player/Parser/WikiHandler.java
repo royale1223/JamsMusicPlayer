@@ -1,22 +1,10 @@
 package com.jams.music.player.Parser;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.util.Log;
-
-import com.jams.music.player.Dialogs.WikiArtistInfoDialog;
 
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.math.BigInteger;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -28,8 +16,7 @@ public class WikiHandler extends DefaultHandler {
     private static final String Q_NAME_REV = "rev";
     private static final String REGEX_INFO_VAL = "\\s?=\\s?((?!\\{\\{).*?\\||(?=\\{\\{)(?:.*?\\}\\}\\|))";
 
-    private static final String URL_WIKIMEDIA = "http://upload.wikimedia.org/wikipedia/commons/";
-    private String imageURL;
+    private String filename;
 
     public static enum RegexInfo {
         image (""),
@@ -68,6 +55,7 @@ public class WikiHandler extends DefaultHandler {
         return artistInfo;
     }
 
+
     private void parseWikiInfo(String content) {
         Pattern reg;
         Matcher regMatch;
@@ -84,16 +72,16 @@ public class WikiHandler extends DefaultHandler {
                 Log.i("Wiki", "Group count:" + regMatch.groupCount() + " " + regMatch.group());
                 regInfo = cleanUpInfo(regMatch.group(1), regName);
                 if (regName.toString() == "image") {
-                    // display image
-                    String filename = regName.toString();
-                    imageURL = getImageURL(filename);
-                    new GetArtistImageAsyncTask().execute(imageURL);
+                    // store image filename : "___.jpg"
+                    filename = regName.toString();
                 } else {
                     artistInfo.put(regName.display(), regInfo);
                 }
             }
         }
     }
+
+    public String getFileName() { return filename; }
 
     private String cleanUpInfo(String s, RegexInfo category) {
         Pattern reg;
@@ -190,78 +178,6 @@ public class WikiHandler extends DefaultHandler {
                 return "December";
             default:
                 return "January";
-        }
-    }
-
-    public String getImageURL(String filename) {
-        String imageFileName;
-        String digest;
-        String subDirectory;
-
-        //imageFileName = filename;
-        imageFileName = "Jessie J 2012.jpg"; // try this image
-        imageFileName = imageFileName.replaceAll(" ", "_"); // replace blank spaces with underscore
-        digest = md5Java(imageFileName); // generate MD5
-        subDirectory = digest.charAt(0) + "/" + digest.charAt(0) + digest.charAt(1) + "/"; // construct subdirectories to image
-
-        imageURL = URL_WIKIMEDIA +
-                subDirectory +
-                imageFileName;
-
-        Log.v(imageURL, "Image URL");
-        return imageURL;
-    }
-
-    // Generate md5
-    public static String md5Java(String message){
-        String digest = null;
-
-        try {
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            byte[] messageDigest = md.digest(message.getBytes());
-            BigInteger number = new BigInteger(1, messageDigest);
-            digest = number.toString(16);
-            // Now we need to zero pad it if you actually want the full 32 chars.
-            while (digest .length() < 32) {
-                digest  = "0" + digest ;
-            }
-            return digest;
-        }
-        catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private class GetArtistImageAsyncTask extends AsyncTask<String, Void, Bitmap> {
-
-        @Override
-        protected Bitmap doInBackground(String... url_array) {
-            URL url;
-
-            try {
-                url = new URL(url_array[0]);
-                HttpURLConnection connection =
-                        (HttpURLConnection) url.openConnection();
-
-                connection.setDoInput(true);
-                connection.connect();
-
-                InputStream input = connection.getInputStream();
-                Bitmap bitmap = BitmapFactory.decodeStream(input);
-                input.close();
-                return bitmap;
-
-            } catch (IOException e) {
-                e.printStackTrace();
-                return null;
-            }
-
-        }
-
-        @Override
-        protected void onPostExecute(Bitmap result) {
-            WikiArtistInfoDialog dialog = new WikiArtistInfoDialog();
-            dialog.setImage(result);
         }
     }
 }

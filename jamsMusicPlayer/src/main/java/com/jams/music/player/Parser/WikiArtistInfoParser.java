@@ -1,6 +1,7 @@
 package com.jams.music.player.Parser;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -10,6 +11,9 @@ import org.xml.sax.SAXException;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -35,17 +39,21 @@ public class WikiArtistInfoParser implements ParseCompleteListener {
 
     public ParseCompleteListener listener = null;
 
+    WikiHandler handler;
+
+    private static final String URL_WIKIMEDIA = "http://upload.wikimedia.org/wikipedia/commons/";
+    private String imageURL;
+    private String imageFileName;
+
     public void search(String titles) {
         if(titles != null && titles.length() > 0)
             new GetWikiInfoAsyncTask(titles).execute();
-
     }
 
     @Override
     public void onParseComplete(HashMap wikiInfo) {
         if(listener != null)
             listener.onParseComplete(wikiInfo);
-
     }
 
     public void setParseCompleteListener(ParseCompleteListener listener) {
@@ -104,7 +112,7 @@ public class WikiArtistInfoParser implements ParseCompleteListener {
                 return null;
             }
 
-            WikiHandler handler = new WikiHandler();
+            handler = new WikiHandler();
             try {
                 parser.parse(response, handler);
             } catch (SAXException e) {
@@ -112,12 +120,66 @@ public class WikiArtistInfoParser implements ParseCompleteListener {
             } catch (IOException e) {
                 return null;
             }
+
             return handler.getWikiInfo();
         }
 
+        @Override
         protected void onPostExecute(HashMap wikiInfo) {
             onParseComplete(wikiInfo);
         }
     }
 
+    public String getImageURL() {
+        String digest = null;
+        String subDirectory = null;
+
+        try {
+            //imageFileName = handler.getFileName();
+            imageFileName = "Jessie J 2012.jpg"; // try this image
+        } catch (NullPointerException e){
+            e.printStackTrace();
+            return null;
+        }
+        // replace blank spaces with underscore
+        imageFileName = imageFileName.replaceAll(" ", "_");
+
+        // generate MD5 for this image filename
+        digest = md5Java(imageFileName);
+
+        // construct subdirectories to image
+        subDirectory = digest.charAt(0) +
+                    "/" +
+                    digest.charAt(0) +
+                    digest.charAt(1) +
+                    "/";
+
+        imageURL = URL_WIKIMEDIA +
+                subDirectory +
+                imageFileName;
+
+        Log.v(imageURL, "Image URL");
+
+        return imageURL;
+    }
+
+    // Generate md5
+    public static String md5Java(String message){
+        String digest = null;
+
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            byte[] messageDigest = md.digest(message.getBytes());
+            BigInteger number = new BigInteger(1, messageDigest);
+            digest = number.toString(16);
+            // Now we need to zero pad it if you actually want the full 32 chars.
+            while (digest .length() < 32) {
+                digest  = "0" + digest ;
+            }
+            return digest;
+        }
+        catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

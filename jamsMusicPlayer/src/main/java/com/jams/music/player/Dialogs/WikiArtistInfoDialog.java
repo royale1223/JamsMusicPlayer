@@ -18,6 +18,10 @@ import com.jams.music.player.Parser.ParseCompleteListener;
 import com.jams.music.player.Parser.WikiArtistInfoParser;
 import com.jams.music.player.R;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.HashMap;
 
 /**
@@ -32,7 +36,7 @@ public class WikiArtistInfoDialog extends DialogFragment {
     private SeekBar loadBar;
 
     private ImageView imageView;
-    private Bitmap bitmap;
+    private String imgURL;
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
@@ -55,9 +59,15 @@ public class WikiArtistInfoDialog extends DialogFragment {
                             info += wikiInfo.get(s);
                             info += "\n";
                         }
-                       artistInfo.setText(info);
-                       loadBar.setVisibility(View.GONE);
-                       imageView.setImageBitmap(bitmap);
+                        artistInfo.setText(info);
+                        loadBar.setVisibility(View.GONE);
+
+                        try {
+                            imgURL = parser.getImageURL();
+                        } catch (NullPointerException e) {
+                            e.printStackTrace();
+                        }
+                        new GetArtistImageAsyncTask().execute(imgURL);
                     }
                 }
             }
@@ -68,9 +78,6 @@ public class WikiArtistInfoDialog extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         View view = getActivity().getLayoutInflater().inflate(R.layout.fragment_wiki_artist_info, null);
         imageView =  (ImageView) view.findViewById(R.id.wiki_image_view);
-
-        //imageView.setImageBitmap(bitmap);
-
         artistName = (TextView) view.findViewById(R.id.wiki_artist_name);
         artistInfo = (TextView) view.findViewById(R.id.wiki_artist_info);
         loadBar = (SeekBar) view.findViewById(R.id.seekBar);
@@ -92,8 +99,37 @@ public class WikiArtistInfoDialog extends DialogFragment {
         show(ft, "wikiArtistInfo");
     }
 
-    public void setImage(Bitmap bm){
-        this.bitmap = bm;
+    private class GetArtistImageAsyncTask extends AsyncTask<String, Void, Bitmap> {
+
+        @Override
+        protected Bitmap doInBackground(String... url_array) {
+            Log.i("Bla","In image async task");
+
+            URL url;
+
+            try {
+                url = new URL(url_array[0]);
+                HttpURLConnection connection =
+                        (HttpURLConnection) url.openConnection();
+
+                connection.setDoInput(true);
+                connection.connect();
+
+                InputStream input = connection.getInputStream();
+                Bitmap bitmap = BitmapFactory.decodeStream(input);
+                input.close();
+                return bitmap;
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap result) {
+            imageView.setImageBitmap(result);
+        }
     }
 
 }
