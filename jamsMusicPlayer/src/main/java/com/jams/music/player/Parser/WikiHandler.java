@@ -55,7 +55,6 @@ public class WikiHandler extends DefaultHandler {
         return artistInfo;
     }
 
-
     private void parseWikiInfo(String content) {
         Pattern reg;
         Matcher regMatch;
@@ -71,7 +70,7 @@ public class WikiHandler extends DefaultHandler {
                 }*/
                 Log.i("Wiki", "Group count:" + regMatch.groupCount() + " " + regMatch.group());
                 regInfo = cleanUpInfo(regMatch.group(1), regName);
-                if (regName.toString() == "image") {
+                if (regName == RegexInfo.image) {
                     // store image filename : "___.jpg"
                     filename = regName.toString();
                 } else {

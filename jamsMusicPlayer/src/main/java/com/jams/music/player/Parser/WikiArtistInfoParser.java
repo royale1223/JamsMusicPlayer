@@ -136,7 +136,7 @@ public class WikiArtistInfoParser implements ParseCompleteListener {
 
         try {
             //imageFileName = handler.getFileName();
-            imageFileName = "Jessie J 2012.jpg"; // try this image
+            imageFileName = "Michael Jackson in 1988.jpg"; // try this image
         } catch (NullPointerException e){
             e.printStackTrace();
             return null;

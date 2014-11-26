@@ -29,7 +29,7 @@ import java.util.HashMap;
  */
 public class WikiArtistInfoDialog extends DialogFragment {
     private String artist;
-
+    private View view;
     private WikiArtistInfoParser parser;
     private TextView artistName;
     private TextView artistInfo;
@@ -42,14 +42,17 @@ public class WikiArtistInfoDialog extends DialogFragment {
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        artist = "";
+       // artist = "";
 
         parser = new WikiArtistInfoParser();
         parser.setParseCompleteListener(new ParseCompleteListener() {
             @Override
             public void onParseComplete(HashMap wikiInfo) {
                 if(wikiInfo == null || wikiInfo.isEmpty()) {
-                    artistInfo.setText("Could not find artist");
+                    artistName.setText(artist);
+                    artistInfo.setText("Sorry, could not find artist");
+                    loadBar.setVisibility(View.GONE);
+                    view.setVisibility(View.VISIBLE);
                 } else {
                     if (artistInfo != null) {
                         String info = "";
@@ -59,8 +62,11 @@ public class WikiArtistInfoDialog extends DialogFragment {
                             info += wikiInfo.get(s);
                             info += "\n";
                         }
+
+                        artistName.setText(artist);
                         artistInfo.setText(info);
                         loadBar.setVisibility(View.GONE);
+                        view.setVisibility(View.VISIBLE);
 
                         try {
                             imgURL = parser.getImageURL();
@@ -76,15 +82,16 @@ public class WikiArtistInfoDialog extends DialogFragment {
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        View view = getActivity().getLayoutInflater().inflate(R.layout.fragment_wiki_artist_info, null);
+        view = getActivity().getLayoutInflater().inflate(R.layout.fragment_wiki_artist_info, null);
+        view.setVisibility(View.GONE);
         imageView =  (ImageView) view.findViewById(R.id.wiki_image_view);
+        imageView.setVisibility(View.GONE);
         artistName = (TextView) view.findViewById(R.id.wiki_artist_name);
         artistInfo = (TextView) view.findViewById(R.id.wiki_artist_info);
         loadBar = (SeekBar) view.findViewById(R.id.seekBar);
 
-        artistName.setText(artist);
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle(R.string.artist_info);
+        builder.setTitle("About...");
         builder.setView(view);
         return builder.create();
     }
@@ -128,7 +135,13 @@ public class WikiArtistInfoDialog extends DialogFragment {
 
         @Override
         protected void onPostExecute(Bitmap result) {
-            imageView.setImageBitmap(result);
+            if (result != null) {
+                imageView.setVisibility(View.VISIBLE);
+               // imageView.setMaxHeight(10);
+               // imageView.setMaxHeight(6);
+                imageView.setImageBitmap(result);
+            } else
+                imageView.setVisibility(View.GONE);
         }
     }
 
