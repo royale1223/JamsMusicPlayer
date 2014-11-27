@@ -130,22 +130,29 @@ public class WikiArtistInfoParser implements ParseCompleteListener {
         }
     }
 
-    public String getImageURL() {
+    public String getImageURL(String filename) {
         String digest = null;
         String subDirectory = null;
 
-        try {
+       /* try {
             //imageFileName = handler.getFileName();
-            imageFileName = "Michael Jackson in 1988.jpg"; // try this image
+           /* HashMap<String,String> i = handler.getWikiInfo();
+            for (String j : i.values() ) {
+                Log.i("Wiki", j);
+            }
+            imageFileName = (String) handler.getWikiInfo().get("image");
+
+            //imageFileName = "Michael Jackson in 1988.jpg"; // try this image
         } catch (NullPointerException e){
             e.printStackTrace();
+            Log.i("Wiki", "filename is null");
             return null;
-        }
+        }*/
         // replace blank spaces with underscore
-        imageFileName = imageFileName.replaceAll(" ", "_");
+        filename = filename.replaceAll(" ", "_");
 
         // generate MD5 for this image filename
-        digest = md5Java(imageFileName);
+        digest = md5Java(filename);
 
         // construct subdirectories to image
         subDirectory = digest.charAt(0) +
@@ -154,11 +161,15 @@ public class WikiArtistInfoParser implements ParseCompleteListener {
                     digest.charAt(1) +
                     "/";
 
+        filename = filename.replaceAll("\\(", "%28");
+        filename = filename.replaceAll("\\)", "%29");
+        filename = filename.replaceAll(",", "%2C");
+
         imageURL = URL_WIKIMEDIA +
                 subDirectory +
-                imageFileName;
+                filename;
 
-        Log.v(imageURL, "Image URL");
+        Log.v("Wiki", imageURL);
 
         return imageURL;
     }

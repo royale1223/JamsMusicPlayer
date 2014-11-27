@@ -41,6 +41,7 @@ public class WikiArtistInfoDialog extends DialogFragment {
     private TextView pleaseWait;
     private ImageView imageView;
     private String imgURL;
+    private String img;
 
     private Context context;
     CharSequence text = "Hello toast!";
@@ -70,9 +71,13 @@ public class WikiArtistInfoDialog extends DialogFragment {
                         String info = "";
                         for (Object s : wikiInfo.keySet()) {
                             //TODO: Clean up wikiInfo values
-                            info += s.toString();
-                            info += wikiInfo.get(s);
-                            info += "\n";
+                            if(s.toString().equals("image")) {
+                                img = (String)wikiInfo.get(s);
+                            } else {
+                                info += s.toString();
+                                info += wikiInfo.get(s);
+                                info += "\n";
+                            }
                         }
 
                         artistName.setText(artist);
@@ -88,7 +93,7 @@ public class WikiArtistInfoDialog extends DialogFragment {
                        // view.setVisibility(View.VISIBLE);
 
                         try {
-                            imgURL = parser.getImageURL();
+                            imgURL = parser.getImageURL(img);
                         } catch (NullPointerException e) {
                             e.printStackTrace();
                         }
