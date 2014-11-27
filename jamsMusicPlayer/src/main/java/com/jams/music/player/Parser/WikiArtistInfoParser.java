@@ -1,7 +1,6 @@
 package com.jams.music.player.Parser;
 
 import android.os.AsyncTask;
-import android.util.Log;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -36,14 +35,13 @@ public class WikiArtistInfoParser implements ParseCompleteListener {
     private static final String PROPERTY_RVPROP = "rvprop=content&";
     private static final String PROPERTY_RVSECTION = "rvsection=0&";
     private static final String PROPERTY_TITLES = "titles=";
+    private static final String URL_WIKIMEDIA = "http://upload.wikimedia.org/wikipedia/commons/";
+
+    private String imageURL;
 
     public ParseCompleteListener listener = null;
 
     WikiHandler handler;
-
-    private static final String URL_WIKIMEDIA = "http://upload.wikimedia.org/wikipedia/commons/";
-    private String imageURL;
-    private String imageFileName;
 
     public void search(String titles) {
         if(titles != null && titles.length() > 0)
@@ -134,6 +132,7 @@ public class WikiArtistInfoParser implements ParseCompleteListener {
         String digest = null;
         String subDirectory = null;
 
+<<<<<<< HEAD
         filename = filename.replaceAll(" ", "_"); // replace blank spaces with underscore
 
         try{
@@ -142,6 +141,13 @@ public class WikiArtistInfoParser implements ParseCompleteListener {
             e.printStackTrace();
             return null;
         }
+=======
+        // replace blank spaces with underscore
+        filename = filename.replaceAll(" ", "_");
+
+        // generate MD5 for this image filename
+        digest = md5Java(filename);
+>>>>>>> f561c5e2d5d4596476ca0b387fd1ad6ef663a073
 
         digest = md5Java(imageFileName);    // generate MD5 for this image filename
         subDirectory = digest.charAt(0) +   // construct subdirectories to image
@@ -157,8 +163,6 @@ public class WikiArtistInfoParser implements ParseCompleteListener {
         imageURL = URL_WIKIMEDIA +
                 subDirectory +
                 filename;
-
-        Log.v("Wiki", imageURL);
 
         return imageURL;
     }

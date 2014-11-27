@@ -9,7 +9,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -150,6 +149,10 @@ public class WikiArtistInfoDialog extends DialogFragment {
 
         @Override
         protected Bitmap doInBackground(String... url_array) {
+<<<<<<< HEAD
+=======
+
+>>>>>>> f561c5e2d5d4596476ca0b387fd1ad6ef663a073
             URL url;
 
             try {

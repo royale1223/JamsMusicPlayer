@@ -1,7 +1,5 @@
 package com.jams.music.player.Parser;
 
-import android.util.Log;
-
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -36,7 +34,6 @@ public class WikiHandler extends DefaultHandler {
     }
     private String content = null;
     private HashMap<String, String> artistInfo;
-    private String filename;
 
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
@@ -51,7 +48,6 @@ public class WikiHandler extends DefaultHandler {
     }
 
     public HashMap getWikiInfo() {
-        //HashMap<String,String> info = new HashMap<String,String>(artistInfo);
         return artistInfo;
     }
 
@@ -65,6 +61,7 @@ public class WikiHandler extends DefaultHandler {
             reg = Pattern.compile(regName + REGEX_INFO_VAL);
             regMatch = reg.matcher(content);
             if (regMatch.find()) {
+<<<<<<< HEAD
                 /*if(regName.toString() == "birth_date") {
                     regInfo = formatBirthday(regMatch.group());
                 }*/
@@ -72,22 +69,25 @@ public class WikiHandler extends DefaultHandler {
                 if (regName == RegexInfo.image) {
                     // store image filename : "___.jpg"
                     filename = regName.toString();
+=======
+                regInfo = cleanUpInfo(regMatch.group(1), regName);
+>>>>>>> f561c5e2d5d4596476ca0b387fd1ad6ef663a073
                     artistInfo.put(regName.display(), regInfo);
-                } else {
-                    artistInfo.put(regName.display(), regInfo);
-                }
             }
         }
     }
 
+<<<<<<< HEAD
     //public String getFileName() { return filename; }
 
+=======
+>>>>>>> f561c5e2d5d4596476ca0b387fd1ad6ef663a073
     private String cleanUpInfo(String s, RegexInfo category) {
         Pattern reg;
         Matcher regMatch;
         String newInfo = s;
         switch (category) {
-            case birth_date: // Do nothing
+            case birth_date:
                 String monthFirst = "yes";
                 reg = Pattern.compile("(mf=)(\\w+)");
                 regMatch = reg.matcher(s);
@@ -109,40 +109,26 @@ public class WikiHandler extends DefaultHandler {
                 break;
             default: // Remove references, side notes, and extra brackets/braces.
                 // Regex to remove redundant info.
-                reg = Pattern.compile("(<.*>)|(\\[[\\w,' ',.]+\\|)");
+                reg = Pattern.compile("(\\|[\\w,' ',.,&]+\\])|((?:<.*>)|(?:[F,f]lat list)|(?:nowrap))");
                 regMatch = reg.matcher(newInfo);
                 while(regMatch.find()) {
+<<<<<<< HEAD
                     newInfo = newInfo.replace(regMatch.group(),"");
                 }
                 newInfo = newInfo.replaceAll("[\\|\\{\\}\\*\\]]","");
+=======
+                    if(regMatch.group(1) != null) {
+                        newInfo = newInfo.replace(regMatch.group(1), ", ");
+                    }
+                    if(regMatch.group(2) != null) {
+                        newInfo = newInfo.replace(regMatch.group(2), "");
+                    }
+                }
+                newInfo = newInfo.replaceAll("[\\|\\{\\}\\*\\[\\]]","");
+>>>>>>> f561c5e2d5d4596476ca0b387fd1ad6ef663a073
                 break;
         }
         return newInfo;
-    }
-
-    private String formatBirthday(String s) {
-        Pattern reg;
-        Matcher regMatch;
-        String birthday = "";
-        String monthFirst = "yes";
-        reg = Pattern.compile("(mf=)(\\w+)");
-        regMatch = reg.matcher(s);
-        if (regMatch.find()) {
-            monthFirst = regMatch.group(2).toLowerCase();
-        }
-
-        reg = Pattern.compile("(\\d{4})\\|(\\d{1,2})\\|(\\d{1,2})");
-        regMatch = reg.matcher(s);
-        if (regMatch.find()) {
-            if (monthFirst.contentEquals("yes")) {
-                birthday = getMonth(regMatch.group(2)) + " " + regMatch.group(3) + " " +
-                    regMatch.group(1);
-            } else {
-                birthday = getMonth(regMatch.group(3)) + " " + regMatch.group(2) + " " +
-                        regMatch.group(1);
-            }
-        }
-        return birthday;
     }
 
     private String getMonth(String monthString) {
