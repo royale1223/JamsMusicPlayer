@@ -61,9 +61,6 @@ public class WikiHandler extends DefaultHandler {
             reg = Pattern.compile(regName + REGEX_INFO_VAL);
             regMatch = reg.matcher(content);
             if (regMatch.find()) {
-                /*if(regName.toString() == "birth_date") {
-                    regInfo = formatBirthday(regMatch.group());
-                }*/
                 Log.i("Wiki", "Group count:" + regMatch.groupCount() + " " + regMatch.group());
                 regInfo = cleanUpInfo(regMatch.group(1), regName);
                 if (regName.toString() == "image") {
@@ -80,7 +77,7 @@ public class WikiHandler extends DefaultHandler {
         Matcher regMatch;
         String newInfo = s;
         switch (category) {
-            case birth_date: // Do nothing
+            case birth_date:
                 String monthFirst = "yes";
                 reg = Pattern.compile("(mf=)(\\w+)");
                 regMatch = reg.matcher(s);
@@ -101,44 +98,24 @@ public class WikiHandler extends DefaultHandler {
                 }
                 break;
             default: // Remove references, side notes, and extra brackets/braces.
-                Log.i("Wiki", "group: " + s);
-
                 // Regex to remove redundant info.
-                reg = Pattern.compile("(<.*>)|(\\[[\\w,' ',.]+\\|)");
+                reg = Pattern.compile("(\\|[\\w,' ',.,&]+\\])|((?:<.*>)|(?:[F,f]lat list)|(?:nowrap))");
                 regMatch = reg.matcher(newInfo);
                 while(regMatch.find()) {
-                    Log.i("Wiki", "delete: " + regMatch.group());
-                    newInfo = newInfo.replace(regMatch.group(),"");
+                    if(regMatch.group(1) != null) {
+                        Log.i("Wiki", "group1: " + regMatch.group());
+                        newInfo = newInfo.replace(regMatch.group(1), ", ");
+                    }
+                    if(regMatch.group(2) != null) {
+                        Log.i("Wiki", "group2: " + regMatch.group());
+                        newInfo = newInfo.replace(regMatch.group(2), "");
+                    }
                 }
-                newInfo = newInfo.replaceAll("[\\|,{,},*,\\[,\\]]","");
+                Log.i("Wiki", "done: " + newInfo);
+                newInfo = newInfo.replaceAll("[\\|\\{\\}\\*\\[\\]]","");
                 break;
         }
         return newInfo;
-    }
-
-    private String formatBirthday(String s) {
-        Pattern reg;
-        Matcher regMatch;
-        String birthday = "";
-        String monthFirst = "yes";
-        reg = Pattern.compile("(mf=)(\\w+)");
-        regMatch = reg.matcher(s);
-        if (regMatch.find()) {
-            monthFirst = regMatch.group(2).toLowerCase();
-        }
-
-        reg = Pattern.compile("(\\d{4})\\|(\\d{1,2})\\|(\\d{1,2})");
-        regMatch = reg.matcher(s);
-        if (regMatch.find()) {
-            if (monthFirst.contentEquals("yes")) {
-                birthday = getMonth(regMatch.group(2)) + " " + regMatch.group(3) + " " +
-                    regMatch.group(1);
-            } else {
-                birthday = getMonth(regMatch.group(3)) + " " + regMatch.group(2) + " " +
-                        regMatch.group(1);
-            }
-        }
-        return birthday;
     }
 
     private String getMonth(String monthString) {
