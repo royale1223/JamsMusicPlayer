@@ -6,10 +6,11 @@
     android:weightSum="1">
 
     <ImageView
-        android:layout_width="30dp"
-        android:layout_height="30dp"
+        android:layout_width="164dp"
+        android:layout_height="wrap_content"
         android:id="@+id/wiki_image_view"
-        android:layout_gravity="center_horizontal" />
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="0.32" />
 
     <TextView
         android:layout_width="wrap_content"
