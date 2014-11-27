@@ -16,10 +16,8 @@ public class WikiHandler extends DefaultHandler {
     private static final String Q_NAME_REV = "rev";
     private static final String REGEX_INFO_VAL = "\\s?=\\s?((?!\\{\\{).*?\\||(?=\\{\\{)(?:.*?\\}\\}\\|))";
 
-    private String filename;
-
     public static enum RegexInfo {
-        image (""),
+        image ("image"),
         years_active ("Years Active: "),
         genre ("Genre: "),
         birth_date ("Birth Date: "),
@@ -38,6 +36,7 @@ public class WikiHandler extends DefaultHandler {
     }
     private String content = null;
     private HashMap<String, String> artistInfo;
+    private String filename;
 
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
@@ -52,6 +51,7 @@ public class WikiHandler extends DefaultHandler {
     }
 
     public HashMap getWikiInfo() {
+        //HashMap<String,String> info = new HashMap<String,String>(artistInfo);
         return artistInfo;
     }
 
@@ -73,6 +73,8 @@ public class WikiHandler extends DefaultHandler {
                 if (regName == RegexInfo.image) {
                     // store image filename : "___.jpg"
                     filename = regName.toString();
+
+                    artistInfo.put(regName.display(), regInfo);
                 } else {
                     artistInfo.put(regName.display(), regInfo);
                 }
@@ -117,7 +119,8 @@ public class WikiHandler extends DefaultHandler {
                     Log.i("Wiki", "delete: " + regMatch.group());
                     newInfo = newInfo.replace(regMatch.group(),"");
                 }
-                newInfo = newInfo.replaceAll("[\\|,{,},*,\\[,\\]]","");
+                newInfo = newInfo.replaceAll("[\\|\\{\\}\\*\\]]","");
+                Log.i("Wiki", newInfo);
                 break;
         }
         return newInfo;
