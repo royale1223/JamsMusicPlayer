@@ -106,7 +106,9 @@ public class WikiArtistInfoDialog extends DialogFragment {
             artistName.setText(artist);
         if(loadBar != null)
             loadBar.setVisibility(View.VISIBLE);
-        parser.search(artist.replaceAll(" ", "_"));
+        artist = artist.replaceAll(" ", "_");
+        artist = artist.replaceAll("\\.", "");
+        parser.search(artist);
         show(ft, "wikiArtistInfo");
     }
 
@@ -140,8 +142,6 @@ public class WikiArtistInfoDialog extends DialogFragment {
         protected void onPostExecute(Bitmap result) {
             if (result != null) {
                 imageView.setVisibility(View.VISIBLE);
-               // imageView.setMaxHeight(10);
-               // imageView.setMaxHeight(6);
                 imageView.setImageBitmap(result);
             } else
                 imageView.setVisibility(View.GONE);
