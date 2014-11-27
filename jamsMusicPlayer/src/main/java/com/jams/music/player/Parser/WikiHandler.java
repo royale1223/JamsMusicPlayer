@@ -68,12 +68,10 @@ public class WikiHandler extends DefaultHandler {
                 /*if(regName.toString() == "birth_date") {
                     regInfo = formatBirthday(regMatch.group());
                 }*/
-                Log.i("Wiki", "Group count:" + regMatch.groupCount() + " " + regMatch.group());
                 regInfo = cleanUpInfo(regMatch.group(1), regName);
                 if (regName == RegexInfo.image) {
                     // store image filename : "___.jpg"
                     filename = regName.toString();
-
                     artistInfo.put(regName.display(), regInfo);
                 } else {
                     artistInfo.put(regName.display(), regInfo);
@@ -82,7 +80,7 @@ public class WikiHandler extends DefaultHandler {
         }
     }
 
-    public String getFileName() { return filename; }
+    //public String getFileName() { return filename; }
 
     private String cleanUpInfo(String s, RegexInfo category) {
         Pattern reg;
@@ -110,17 +108,13 @@ public class WikiHandler extends DefaultHandler {
                 }
                 break;
             default: // Remove references, side notes, and extra brackets/braces.
-                Log.i("Wiki", "group: " + s);
-
                 // Regex to remove redundant info.
                 reg = Pattern.compile("(<.*>)|(\\[[\\w,' ',.]+\\|)");
                 regMatch = reg.matcher(newInfo);
                 while(regMatch.find()) {
-                    Log.i("Wiki", "delete: " + regMatch.group());
                     newInfo = newInfo.replace(regMatch.group(),"");
                 }
                 newInfo = newInfo.replaceAll("[\\|\\{\\}\\*\\]]","");
-                Log.i("Wiki", newInfo);
                 break;
         }
         return newInfo;

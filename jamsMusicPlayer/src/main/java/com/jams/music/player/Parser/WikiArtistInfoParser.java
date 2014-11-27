@@ -134,36 +134,25 @@ public class WikiArtistInfoParser implements ParseCompleteListener {
         String digest = null;
         String subDirectory = null;
 
-       /* try {
-            //imageFileName = handler.getFileName();
-           /* HashMap<String,String> i = handler.getWikiInfo();
-            for (String j : i.values() ) {
-                Log.i("Wiki", j);
-            }
-            imageFileName = (String) handler.getWikiInfo().get("image");
+        filename = filename.replaceAll(" ", "_"); // replace blank spaces with underscore
 
-            //imageFileName = "Michael Jackson in 1988.jpg"; // try this image
-        } catch (NullPointerException e){
+        try{
+            this.imageFileName = filename;
+        } catch (NullPointerException e) {
             e.printStackTrace();
-            Log.i("Wiki", "filename is null");
             return null;
-        }*/
-        // replace blank spaces with underscore
-        filename = filename.replaceAll(" ", "_");
+        }
 
-        // generate MD5 for this image filename
-        digest = md5Java(filename);
-
-        // construct subdirectories to image
-        subDirectory = digest.charAt(0) +
+        digest = md5Java(imageFileName);    // generate MD5 for this image filename
+        subDirectory = digest.charAt(0) +   // construct subdirectories to image
                     "/" +
                     digest.charAt(0) +
                     digest.charAt(1) +
                     "/";
 
-        filename = filename.replaceAll("\\(", "%28");
-        filename = filename.replaceAll("\\)", "%29");
-        filename = filename.replaceAll(",", "%2C");
+        imageFileName = imageFileName.replaceAll("\\(", "%28");
+        imageFileName = imageFileName.replaceAll("\\)", "%29");
+        imageFileName = imageFileName.replaceAll(",", "%2C");
 
         imageURL = URL_WIKIMEDIA +
                 subDirectory +

@@ -12,11 +12,13 @@ import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.jams.music.player.Helpers.TypefaceHelper;
 import com.jams.music.player.Parser.ParseCompleteListener;
 import com.jams.music.player.Parser.WikiArtistInfoParser;
 import com.jams.music.player.R;
@@ -31,51 +33,61 @@ import java.util.HashMap;
  *
  */
 public class WikiArtistInfoDialog extends DialogFragment {
-    private String artist;
-    private View view;
     private WikiArtistInfoParser parser;
-    private TextView artistName;
-    private TextView artistInfo;
-    private SeekBar loadBar;
-    private ProgressBar progressBar;
-    private TextView pleaseWait;
-    private ImageView imageView;
+    private String artist;
     private String imgURL;
     private String img;
-
-    private Context context;
-    CharSequence text = "Hello toast!";
-    int duration = Toast.LENGTH_SHORT;
+    private View view;
+    private TextView artistName;
+    private TextView artistInfo;
+    private TextView pleaseWait;
+    private ImageView imageView;
+    private LinearLayout linearLayout;
+    private ProgressBar progressBar;
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        context = this.getActivity();
-
-       // artist = "";
 
         parser = new WikiArtistInfoParser();
         parser.setParseCompleteListener(new ParseCompleteListener() {
-
             @Override
             public void onParseComplete(HashMap wikiInfo) {
-                Toast toast = Toast.makeText(context, text, duration);
-                toast.show();
+
                 if(wikiInfo == null || wikiInfo.isEmpty()) {
-                    //artistName.setText(artist);
+                    artistName.setText(artist);
                     artistInfo.setText("Sorry, could not find artist");
-                   // loadBar.setVisibility(View.GONE);
-                    //view.setVisibility(View.VISIBLE);
+                    artistName.setVisibility(View.VISIBLE);
+                    artistInfo.setVisibility(View.VISIBLE);
+                    linearLayout.setVisibility(View.GONE);
                 } else {
                     if (artistInfo != null) {
                         String info = "";
+                        String title = null;
+                        String content;
                         for (Object s : wikiInfo.keySet()) {
-                            //TODO: Clean up wikiInfo values
                             if(s.toString().equals("image")) {
                                 img = (String)wikiInfo.get(s);
                             } else {
-                                info += s.toString();
-                                info += wikiInfo.get(s);
+                                title = s.toString();
+
+                                if (title.equals("Birth Place: ")){
+                                    content = (String) wikiInfo.get(s);
+                                    content = content.replace("[[","");
+                                    info += title;
+                                    info += content;
+                                } else if (title.equals("Genre: ")) {
+                                    content = (String) wikiInfo.get(s);
+                                    content = content.replace(",", "|");
+                                    content = content.replace("[", "");
+                                    info += title;
+                                    info += content;
+                                } else {
+                                    content = (String) wikiInfo.get(s);
+                                    info += title;
+                                    info += content;
+                                }
+
                                 info += "\n";
                             }
                         }
@@ -83,21 +95,13 @@ public class WikiArtistInfoDialog extends DialogFragment {
                         artistName.setText(artist);
                         artistInfo.setText(info);
 
-                        artistName.setVisibility(View.VISIBLE);
-                        artistInfo.setVisibility(View.VISIBLE);
-
-                      //  loadBar.setVisibility(View.GONE);
-                        progressBar.setVisibility(View.GONE);
-                        pleaseWait.setVisibility(View.GONE);
-
-                       // view.setVisibility(View.VISIBLE);
-
                         try {
                             imgURL = parser.getImageURL(img);
                         } catch (NullPointerException e) {
                             e.printStackTrace();
                         }
                         new GetArtistImageAsyncTask().execute(imgURL);
+
                     }
                 }
         }
@@ -107,21 +111,30 @@ public class WikiArtistInfoDialog extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         view = getActivity().getLayoutInflater().inflate(R.layout.fragment_wiki_artist_info, null);
-       // view.setVisibility(View.GONE);
         imageView =  (ImageView) view.findViewById(R.id.wiki_image_view);
+
         artistName = (TextView) view.findViewById(R.id.wiki_artist_name);
+        artistName.setTypeface(TypefaceHelper.getTypeface(getActivity(), "RobotoCondensed-Bold"));
+
         artistInfo = (TextView) view.findViewById(R.id.wiki_artist_info);
-       // loadBar = (SeekBar) view.findViewById(R.id.seekBar);
+        artistInfo.setTypeface(TypefaceHelper.getTypeface(getActivity(), "RobotoCondensed-Light"));
+
+        // while loading content view
+        linearLayout = (LinearLayout) view.findViewById(R.id.wiki_wait_layout);
         pleaseWait = (TextView) view.findViewById(R.id.wiki_please_wait);
+        pleaseWait.setTypeface(TypefaceHelper.getTypeface(getActivity(), "RobotoCondensed-Light"));
         progressBar = (ProgressBar) view.findViewById(R.id.wiki_progressBar);
 
         imageView.setVisibility(View.GONE);
         artistName.setVisibility(View.GONE);
         artistInfo.setVisibility(View.GONE);
 
+        linearLayout.setVisibility(View.VISIBLE);
+
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("About...");
         builder.setView(view);
+
         return builder.create();
     }
 
@@ -129,8 +142,6 @@ public class WikiArtistInfoDialog extends DialogFragment {
         this.artist = artist;
         if(artistName != null)
             artistName.setText(artist);
-        if(loadBar != null)
-            loadBar.setVisibility(View.VISIBLE);
         parser.search(artist.replaceAll(" ", "_"));
         show(ft, "wikiArtistInfo");
     }
@@ -139,8 +150,6 @@ public class WikiArtistInfoDialog extends DialogFragment {
 
         @Override
         protected Bitmap doInBackground(String... url_array) {
-            Log.i("Bla","In image async task");
-
             URL url;
 
             try {
@@ -166,11 +175,16 @@ public class WikiArtistInfoDialog extends DialogFragment {
         protected void onPostExecute(Bitmap result) {
             if (result != null) {
                 imageView.setVisibility(View.VISIBLE);
-               // imageView.setMaxHeight(10);
-               // imageView.setMaxHeight(6);
                 imageView.setImageBitmap(result);
-            } else
+                linearLayout.setVisibility(View.GONE);
+                artistName.setVisibility(View.VISIBLE);
+                artistInfo.setVisibility(View.VISIBLE);
+            } else {
                 imageView.setVisibility(View.GONE);
+                linearLayout.setVisibility(View.GONE);
+                artistName.setVisibility(View.VISIBLE);
+                artistInfo.setVisibility(View.VISIBLE);
+            }
         }
     }
 
