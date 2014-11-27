@@ -62,10 +62,11 @@ public class WikiHandler extends DefaultHandler {
             regMatch = reg.matcher(content);
             if (regMatch.find()) {
                 regInfo = cleanUpInfo(regMatch.group(1), regName);
-                    artistInfo.put(regName.display(), regInfo);
+                artistInfo.put(regName.display(), regInfo);
             }
         }
     }
+
 
     private String cleanUpInfo(String s, RegexInfo category) {
         Pattern reg;

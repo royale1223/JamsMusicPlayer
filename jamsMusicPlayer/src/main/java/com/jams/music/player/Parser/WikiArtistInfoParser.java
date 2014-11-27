@@ -38,7 +38,6 @@ public class WikiArtistInfoParser implements ParseCompleteListener {
     private static final String URL_WIKIMEDIA = "http://upload.wikimedia.org/wikipedia/commons/";
 
     private String imageURL;
-
     public ParseCompleteListener listener = null;
 
     WikiHandler handler;
@@ -128,30 +127,28 @@ public class WikiArtistInfoParser implements ParseCompleteListener {
         }
     }
 
-    public String getImageURL(String filename) {
+    public String getImageURL(String fileName) {
         String digest = null;
         String subDirectory = null;
 
         // replace blank spaces with underscore
-        filename = filename.replaceAll(" ", "_");
+        fileName = fileName.replaceAll(" ", "_");
 
         // generate MD5 for this image filename
-        digest = md5Java(filename);
-
-        // construct subdirectories to image
-        subDirectory = digest.charAt(0) +
+        digest = md5Java(fileName);    // generate MD5 for this image filename
+        subDirectory = digest.charAt(0) +   // construct subdirectories to image
                     "/" +
                     digest.charAt(0) +
                     digest.charAt(1) +
                     "/";
 
-        filename = filename.replaceAll("\\(", "%28");
-        filename = filename.replaceAll("\\)", "%29");
-        filename = filename.replaceAll(",", "%2C");
+        fileName = fileName.replaceAll("\\(", "%28");
+        fileName = fileName.replaceAll("\\)", "%29");
+        fileName = fileName.replaceAll(",", "%2C");
 
         imageURL = URL_WIKIMEDIA +
                 subDirectory +
-                filename;
+                fileName;
 
         return imageURL;
     }
