@@ -116,7 +116,7 @@ public class WikiArtistInfoDialog extends DialogFragment {
         loadingLayout.setVisibility(View.VISIBLE);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle("About...");
+      //  builder.setTitle("About...");
         builder.setView(view);
 
         return builder.create();
