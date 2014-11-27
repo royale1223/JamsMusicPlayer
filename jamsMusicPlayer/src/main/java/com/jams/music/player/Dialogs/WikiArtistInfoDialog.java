@@ -62,31 +62,13 @@ public class WikiArtistInfoDialog extends DialogFragment {
                 } else {
                     if (artistInfo != null) {
                         String info = "";
-                        String title = null;
-                        String content;
+
                         for (Object s : wikiInfo.keySet()) {
                             if(s.toString().equals("image")) {
                                 img = (String)wikiInfo.get(s);
                             } else {
-                                title = s.toString();
-
-                                if (title.equals("Birth Place: ")){
-                                    content = (String) wikiInfo.get(s);
-                                    content = content.replace("[[","");
-                                    info += title;
-                                    info += content;
-                                } else if (title.equals("Genre: ")) {
-                                    content = (String) wikiInfo.get(s);
-                                    content = content.replace(",", "|");
-                                    content = content.replace("[", "");
-                                    info += title;
-                                    info += content;
-                                } else {
-                                    content = (String) wikiInfo.get(s);
-                                    info += title;
-                                    info += content;
-                                }
-
+                                info += s.toString();
+                                info += wikiInfo.get(s);
                                 info += "\n";
                             }
                         }
