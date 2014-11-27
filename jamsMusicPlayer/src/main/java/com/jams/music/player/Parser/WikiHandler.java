@@ -61,27 +61,12 @@ public class WikiHandler extends DefaultHandler {
             reg = Pattern.compile(regName + REGEX_INFO_VAL);
             regMatch = reg.matcher(content);
             if (regMatch.find()) {
-<<<<<<< HEAD
-                /*if(regName.toString() == "birth_date") {
-                    regInfo = formatBirthday(regMatch.group());
-                }*/
                 regInfo = cleanUpInfo(regMatch.group(1), regName);
-                if (regName == RegexInfo.image) {
-                    // store image filename : "___.jpg"
-                    filename = regName.toString();
-=======
-                regInfo = cleanUpInfo(regMatch.group(1), regName);
->>>>>>> f561c5e2d5d4596476ca0b387fd1ad6ef663a073
-                    artistInfo.put(regName.display(), regInfo);
+                artistInfo.put(regName.display(), regInfo);
             }
         }
     }
 
-<<<<<<< HEAD
-    //public String getFileName() { return filename; }
-
-=======
->>>>>>> f561c5e2d5d4596476ca0b387fd1ad6ef663a073
     private String cleanUpInfo(String s, RegexInfo category) {
         Pattern reg;
         Matcher regMatch;
@@ -112,11 +97,6 @@ public class WikiHandler extends DefaultHandler {
                 reg = Pattern.compile("(\\|[\\w,' ',.,&]+\\])|((?:<.*>)|(?:[F,f]lat list)|(?:nowrap))");
                 regMatch = reg.matcher(newInfo);
                 while(regMatch.find()) {
-<<<<<<< HEAD
-                    newInfo = newInfo.replace(regMatch.group(),"");
-                }
-                newInfo = newInfo.replaceAll("[\\|\\{\\}\\*\\]]","");
-=======
                     if(regMatch.group(1) != null) {
                         newInfo = newInfo.replace(regMatch.group(1), ", ");
                     }
@@ -125,7 +105,6 @@ public class WikiHandler extends DefaultHandler {
                     }
                 }
                 newInfo = newInfo.replaceAll("[\\|\\{\\}\\*\\[\\]]","");
->>>>>>> f561c5e2d5d4596476ca0b387fd1ad6ef663a073
                 break;
         }
         return newInfo;
