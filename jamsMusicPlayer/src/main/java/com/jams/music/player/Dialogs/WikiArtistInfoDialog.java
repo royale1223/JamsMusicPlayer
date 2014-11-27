@@ -149,12 +149,7 @@ public class WikiArtistInfoDialog extends DialogFragment {
 
         @Override
         protected Bitmap doInBackground(String... url_array) {
-<<<<<<< HEAD
-=======
-
->>>>>>> f561c5e2d5d4596476ca0b387fd1ad6ef663a073
-            URL url;
-
+           URL url;
             try {
                 url = new URL(url_array[0]);
                 HttpURLConnection connection =
