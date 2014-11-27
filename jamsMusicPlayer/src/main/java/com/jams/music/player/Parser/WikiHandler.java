@@ -1,7 +1,5 @@
 package com.jams.music.player.Parser;
 
-import android.util.Log;
-
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -36,7 +34,6 @@ public class WikiHandler extends DefaultHandler {
     }
     private String content = null;
     private HashMap<String, String> artistInfo;
-    private String filename;
 
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
@@ -51,7 +48,6 @@ public class WikiHandler extends DefaultHandler {
     }
 
     public HashMap getWikiInfo() {
-        //HashMap<String,String> info = new HashMap<String,String>(artistInfo);
         return artistInfo;
     }
 
@@ -65,21 +61,11 @@ public class WikiHandler extends DefaultHandler {
             reg = Pattern.compile(regName + REGEX_INFO_VAL);
             regMatch = reg.matcher(content);
             if (regMatch.find()) {
-                Log.i("Wiki", "Group count:" + regMatch.groupCount() + " " + regMatch.group());
                 regInfo = cleanUpInfo(regMatch.group(1), regName);
-                if (regName == RegexInfo.image) {
-                    // store image filename : "___.jpg"
-                    filename = regName.toString();
-
                     artistInfo.put(regName.display(), regInfo);
-                } else {
-                    artistInfo.put(regName.display(), regInfo);
-                }
             }
         }
     }
-
-    public String getFileName() { return filename; }
 
     private String cleanUpInfo(String s, RegexInfo category) {
         Pattern reg;
@@ -112,15 +98,12 @@ public class WikiHandler extends DefaultHandler {
                 regMatch = reg.matcher(newInfo);
                 while(regMatch.find()) {
                     if(regMatch.group(1) != null) {
-                        Log.i("Wiki", "group1: " + regMatch.group());
                         newInfo = newInfo.replace(regMatch.group(1), ", ");
                     }
                     if(regMatch.group(2) != null) {
-                        Log.i("Wiki", "group2: " + regMatch.group());
                         newInfo = newInfo.replace(regMatch.group(2), "");
                     }
                 }
-                Log.i("Wiki", "done: " + newInfo);
                 newInfo = newInfo.replaceAll("[\\|\\{\\}\\*\\[\\]]","");
                 break;
         }

@@ -1,7 +1,6 @@
 package com.jams.music.player.Parser;
 
 import android.os.AsyncTask;
-import android.util.Log;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -36,14 +35,13 @@ public class WikiArtistInfoParser implements ParseCompleteListener {
     private static final String PROPERTY_RVPROP = "rvprop=content&";
     private static final String PROPERTY_RVSECTION = "rvsection=0&";
     private static final String PROPERTY_TITLES = "titles=";
+    private static final String URL_WIKIMEDIA = "http://upload.wikimedia.org/wikipedia/commons/";
+
+    private String imageURL;
 
     public ParseCompleteListener listener = null;
 
     WikiHandler handler;
-
-    private static final String URL_WIKIMEDIA = "http://upload.wikimedia.org/wikipedia/commons/";
-    private String imageURL;
-    private String imageFileName;
 
     public void search(String titles) {
         if(titles != null && titles.length() > 0)
@@ -134,20 +132,6 @@ public class WikiArtistInfoParser implements ParseCompleteListener {
         String digest = null;
         String subDirectory = null;
 
-       /* try {
-            //imageFileName = handler.getFileName();
-           /* HashMap<String,String> i = handler.getWikiInfo();
-            for (String j : i.values() ) {
-                Log.i("Wiki", j);
-            }
-            imageFileName = (String) handler.getWikiInfo().get("image");
-
-            //imageFileName = "Michael Jackson in 1988.jpg"; // try this image
-        } catch (NullPointerException e){
-            e.printStackTrace();
-            Log.i("Wiki", "filename is null");
-            return null;
-        }*/
         // replace blank spaces with underscore
         filename = filename.replaceAll(" ", "_");
 
@@ -168,8 +152,6 @@ public class WikiArtistInfoParser implements ParseCompleteListener {
         imageURL = URL_WIKIMEDIA +
                 subDirectory +
                 filename;
-
-        Log.v("Wiki", imageURL);
 
         return imageURL;
     }

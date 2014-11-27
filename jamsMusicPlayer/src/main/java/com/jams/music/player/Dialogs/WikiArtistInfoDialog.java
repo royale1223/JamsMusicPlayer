@@ -8,7 +8,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.SeekBar;
@@ -115,7 +114,6 @@ public class WikiArtistInfoDialog extends DialogFragment {
 
         @Override
         protected Bitmap doInBackground(String... url_array) {
-            Log.i("Bla","In image async task");
 
             URL url;
 
