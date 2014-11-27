@@ -16,6 +16,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+
+
 /**
  *
  */
@@ -31,7 +33,6 @@ public class WikiArtistInfoParser implements ParseCompleteListener {
     private static final String PROPERTY_RVSECTION = "rvsection=0&";
     private static final String PROPERTY_TITLES = "titles=";
 
-
     public ParseCompleteListener listener = null;
 
     public void search(String titles) {
@@ -44,6 +45,7 @@ public class WikiArtistInfoParser implements ParseCompleteListener {
     public void onParseComplete(HashMap wikiInfo) {
         if(listener != null)
             listener.onParseComplete(wikiInfo);
+
     }
 
     public void setParseCompleteListener(ParseCompleteListener listener) {
@@ -79,9 +81,9 @@ public class WikiArtistInfoParser implements ParseCompleteListener {
         }
 
         protected void onPostExecute(InputStream response) {
-            if (response != null)
+            if (response != null) {
                 new ParseWikiInfoAsyncTask(response).execute();
-
+            }
         }
     }
 
@@ -110,13 +112,12 @@ public class WikiArtistInfoParser implements ParseCompleteListener {
             } catch (IOException e) {
                 return null;
             }
-
             return handler.getWikiInfo();
-
         }
 
         protected void onPostExecute(HashMap wikiInfo) {
             onParseComplete(wikiInfo);
         }
     }
+
 }
