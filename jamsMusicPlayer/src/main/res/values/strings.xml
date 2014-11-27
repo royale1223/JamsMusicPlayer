@@ -861,5 +861,6 @@
     <string name="refresh_music_library">Refresh Music Library</string>
     <string name="wiki_artist_info">Artist Info</string>
     <string name="artist_info">Loading...</string>
+    <string name="wiki_please_wait">Please wait...</string>
 
 </resources>

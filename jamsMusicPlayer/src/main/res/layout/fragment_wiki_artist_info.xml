@@ -5,9 +5,34 @@
     android:layout_height="match_parent"
     android:weightSum="1">
 
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="90dp"
+        android:accessibilityLiveRegion="polite"
+        android:layout_gravity="center_horizontal">
+
+        <ProgressBar
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/wiki_progressBar"
+            android:layout_gravity="center"
+            android:layout_marginLeft="50dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/wiki_please_wait"
+            android:id="@+id/wiki_please_wait"
+            android:layout_gravity="center" />
+
+    </LinearLayout>
+
     <ImageView
         android:layout_width="164dp"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:id="@+id/wiki_image_view"
         android:layout_gravity="center_horizontal"
         android:layout_weight="0.32" />

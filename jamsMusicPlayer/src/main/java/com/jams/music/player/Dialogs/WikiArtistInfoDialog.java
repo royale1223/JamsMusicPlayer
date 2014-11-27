@@ -2,6 +2,7 @@ package com.jams.music.player.Dialogs;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -11,8 +12,10 @@ import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.jams.music.player.Parser.ParseCompleteListener;
 import com.jams.music.player.Parser.WikiArtistInfoParser;
@@ -34,25 +37,34 @@ public class WikiArtistInfoDialog extends DialogFragment {
     private TextView artistName;
     private TextView artistInfo;
     private SeekBar loadBar;
-
+    private ProgressBar progressBar;
+    private TextView pleaseWait;
     private ImageView imageView;
     private String imgURL;
+
+    private Context context;
+    CharSequence text = "Hello toast!";
+    int duration = Toast.LENGTH_SHORT;
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        context = this.getActivity();
 
        // artist = "";
 
         parser = new WikiArtistInfoParser();
         parser.setParseCompleteListener(new ParseCompleteListener() {
+
             @Override
             public void onParseComplete(HashMap wikiInfo) {
+                Toast toast = Toast.makeText(context, text, duration);
+                toast.show();
                 if(wikiInfo == null || wikiInfo.isEmpty()) {
-                    artistName.setText(artist);
+                    //artistName.setText(artist);
                     artistInfo.setText("Sorry, could not find artist");
-                    loadBar.setVisibility(View.GONE);
-                    view.setVisibility(View.VISIBLE);
+                   // loadBar.setVisibility(View.GONE);
+                    //view.setVisibility(View.VISIBLE);
                 } else {
                     if (artistInfo != null) {
                         String info = "";
@@ -65,8 +77,15 @@ public class WikiArtistInfoDialog extends DialogFragment {
 
                         artistName.setText(artist);
                         artistInfo.setText(info);
-                        loadBar.setVisibility(View.GONE);
-                        view.setVisibility(View.VISIBLE);
+
+                        artistName.setVisibility(View.VISIBLE);
+                        artistInfo.setVisibility(View.VISIBLE);
+
+                      //  loadBar.setVisibility(View.GONE);
+                        progressBar.setVisibility(View.GONE);
+                        pleaseWait.setVisibility(View.GONE);
+
+                       // view.setVisibility(View.VISIBLE);
 
                         try {
                             imgURL = parser.getImageURL();
@@ -76,19 +95,24 @@ public class WikiArtistInfoDialog extends DialogFragment {
                         new GetArtistImageAsyncTask().execute(imgURL);
                     }
                 }
-            }
+        }
         });
     }
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         view = getActivity().getLayoutInflater().inflate(R.layout.fragment_wiki_artist_info, null);
-        view.setVisibility(View.GONE);
+       // view.setVisibility(View.GONE);
         imageView =  (ImageView) view.findViewById(R.id.wiki_image_view);
-        imageView.setVisibility(View.GONE);
         artistName = (TextView) view.findViewById(R.id.wiki_artist_name);
         artistInfo = (TextView) view.findViewById(R.id.wiki_artist_info);
-        loadBar = (SeekBar) view.findViewById(R.id.seekBar);
+       // loadBar = (SeekBar) view.findViewById(R.id.seekBar);
+        pleaseWait = (TextView) view.findViewById(R.id.wiki_please_wait);
+        progressBar = (ProgressBar) view.findViewById(R.id.wiki_progressBar);
+
+        imageView.setVisibility(View.GONE);
+        artistName.setVisibility(View.GONE);
+        artistInfo.setVisibility(View.GONE);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("About...");
