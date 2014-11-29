@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
  */
 public class WikiHandler extends DefaultHandler {
     private static final String Q_NAME_REV = "rev";
-    private static final String REGEX_INFO_VAL = "\\s?=\\s?((?!\\{\\{).*?\\||(?=\\{\\{)(?:.*?\\}\\}\\|))";
+    private static final String REGEX_INFO_VAL = "\\s+=\\s?((?!\\{\\{).*?\\||(?=\\{\\{)(?:.*?\\}\\}\\|))";
 
     public static enum RegexInfo {
         image ("image"),
@@ -95,7 +95,7 @@ public class WikiHandler extends DefaultHandler {
                 break;
             default: // Remove references, side notes, and extra brackets/braces.
                 // Regex to remove redundant info.
-                reg = Pattern.compile("(\\|[\\w,' ',.,&]+\\])|((?:<.*>)|(?:[F,f]lat list)|(?:nowrap))");
+                reg = Pattern.compile("(\\|[\\w,' ',.,&]+\\])|((?:<.*>)|(?:[F,f]lat list)|(?:nowrap)|(?:cite web)|(?:IMDb name))");
                 regMatch = reg.matcher(newInfo);
                 while(regMatch.find()) {
                     if(regMatch.group(1) != null) {

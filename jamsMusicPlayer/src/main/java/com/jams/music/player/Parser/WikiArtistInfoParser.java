@@ -134,7 +134,7 @@ public class WikiArtistInfoParser implements ParseCompleteListener {
 
         // replace blank spaces with underscore
         fileName = fileName.replaceAll(" ", "_");
-
+        fileName = fileName.replace("File:", ""); //remove preceding "File:" at .jpg filename
         // generate MD5 for this image filename
         digest = md5Java(fileName);    // generate MD5 for this image filename
         subDirectory = digest.charAt(0) +   // construct subdirectories to image
