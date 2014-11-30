@@ -1,5 +1,7 @@
 package com.jams.music.player.Parser;
 
+import android.util.Log;
+
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -95,7 +97,7 @@ public class WikiHandler extends DefaultHandler {
                 break;
             default: // Remove references, side notes, and extra brackets/braces.
                 // Regex to remove redundant info.
-                reg = Pattern.compile("(\\|[\\w,' ',.,&]+\\])|((?:<.*>)|(?:[F,f]lat list)|(?:nowrap))");
+                reg = Pattern.compile("(\\|[\\w,' ',.,&]+\\])|((\\{\\{!\\}\\}border)|(?:<!.*?->)|(?:<ref .*?>)|(?:<ref>.*?>)|(?:[F,f]lat list)|(?:nowrap))");
                 regMatch = reg.matcher(newInfo);
                 while(regMatch.find()) {
                     if(regMatch.group(1) != null) {
