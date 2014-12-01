@@ -82,23 +82,11 @@ public class WikiHandler extends DefaultHandler {
         String newInfo = s;
         switch (category) {
             case birth_date:
-                String monthFirst = "yes";
-                reg = Pattern.compile("(mf=)(\\w+)");
-                regMatch = reg.matcher(s);
-                if (regMatch.find()) {
-                    monthFirst = regMatch.group(2).toLowerCase();
-                }
-
                 reg = Pattern.compile("(\\d{4})\\|(\\d{1,2})\\|(\\d{1,2})");
                 regMatch = reg.matcher(s);
                 if (regMatch.find()) {
-                    if (monthFirst.contentEquals("yes")) {
-                        newInfo = getMonth(regMatch.group(2)) + " " + regMatch.group(3) + ", " +
-                                regMatch.group(1);
-                    } else {
-                        newInfo = getMonth(regMatch.group(3)) + " " + regMatch.group(2) + ", " +
-                                regMatch.group(1);
-                    }
+                    newInfo = getMonth(regMatch.group(2)) + " " + regMatch.group(3) + ", " +
+                            regMatch.group(1);
                 }
                 break;
             case years_active:
