@@ -1,6 +1,7 @@
 package com.jams.music.player.Parser;
 
 
+
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -13,7 +14,9 @@ import java.util.regex.Pattern;
  */
 public class WikiHandler extends DefaultHandler {
     private static final String Q_NAME_REV = "rev";
-    private static final String REGEX_INFO_VAL = "\\s+?=\\s+?(.*?)\\|\\s*?\\w+\\s*?=";
+    private static final String REGEX_INFO_VAL = "\\s+=\\s?((?!\\{\\{).*?\\||(?=\\{\\{)(?:.*?\\}\\}\\|))";
+    private static final String REGEX_BIRTHDAY = "\\s+?=\\s+?\\{\\{(.*?)\\}\\}";
+    private static final String REGEX_CLEAN_STRING = "(\\|[\\w,' ',.,&]+\\])|((?:\\{\\{!\\}\\}border)|(?:<!.*?->)|(?:<ref .*?>)|(?:<ref>.*?>)|(?:[F,f]lat\\s?list)|(?:nowrap))";
 
     public static enum RegexInfo {
         image ("image"),
@@ -59,7 +62,11 @@ public class WikiHandler extends DefaultHandler {
         artistInfo = new HashMap<String, String>();
 
         for (RegexInfo regName : RegexInfo.values()) {
-            reg = Pattern.compile(regName + REGEX_INFO_VAL);
+            if (regName.toString().equals("birth_date")) {
+                reg = Pattern.compile(regName + REGEX_BIRTHDAY);
+            } else {
+                reg = Pattern.compile(regName + REGEX_INFO_VAL);
+            }
             regMatch = reg.matcher(content);
             if (regMatch.find()) {
                 regInfo = cleanUpInfo(regMatch.group(1), regName);
@@ -94,8 +101,20 @@ public class WikiHandler extends DefaultHandler {
                     }
                 }
                 break;
+            case years_active:
+                reg = Pattern.compile("(?i)(\\d{4}).*?(\\d{4}|present)");
+                regMatch = reg.matcher(newInfo);
+                if(regMatch.find()) {
+                    if(regMatch.group(1) != null) {
+                        newInfo = regMatch.group(1);
+                    }
+                    if(regMatch.group(2) != null) {
+                        newInfo += " - " + regMatch.group(2);
+                    }
+                }
+                break;
             default:
-                reg = Pattern.compile("(\\|[\\w,' ',.,&]+\\])|((\\{\\{!\\}\\}border)|(?:<!.*?->)|(?:<ref .*?>)|(?:<ref>.*?>)|(?:[F,f]lat\\s?list)|(?:nowrap)|(?:cite web)|(?:IMDb name))");
+                reg = Pattern.compile(REGEX_CLEAN_STRING);
                 regMatch = reg.matcher(newInfo);
                 while(regMatch.find()) {
                     if(regMatch.group(1) != null) {
