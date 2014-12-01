@@ -11,7 +11,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.jams.music.player.Helpers.TypefaceHelper;
@@ -25,9 +24,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
 
-/**
- *
- */
 public class WikiArtistInfoDialog extends DialogFragment {
     private WikiArtistInfoParser parser;
     private String artist;
@@ -39,7 +35,6 @@ public class WikiArtistInfoDialog extends DialogFragment {
     private TextView pleaseWait;
     private ImageView imageView;
     private LinearLayout loadingLayout;
-    private ProgressBar progressBar;
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
@@ -114,7 +109,6 @@ public class WikiArtistInfoDialog extends DialogFragment {
         loadingLayout = (LinearLayout) view.findViewById(R.id.wiki_wait_layout);
         pleaseWait = (TextView) view.findViewById(R.id.wiki_please_wait);
         pleaseWait.setTypeface(TypefaceHelper.getTypeface(getActivity(), "RobotoCondensed-Light"));
-        progressBar = (ProgressBar) view.findViewById(R.id.wiki_progressBar);
 
         imageView.setVisibility(View.GONE);
         artistName.setVisibility(View.GONE);
@@ -123,7 +117,6 @@ public class WikiArtistInfoDialog extends DialogFragment {
         loadingLayout.setVisibility(View.VISIBLE);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-      //  builder.setTitle("About...");
         builder.setView(view);
 
         return builder.create();

@@ -1,7 +1,6 @@
 package com.jams.music.player.Parser;
 
 import android.os.AsyncTask;
-import android.util.Log;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -21,12 +20,7 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 
-
-/**
- *
- */
 public class WikiArtistInfoParser implements ParseCompleteListener {
-    //https://en.wikipedia.org/w/api.php?action=query&continue=&format=xmlfm&prop=revisions&redirects=true&rvprop=content&rvsection=0&titles=
     private static final String URL_WIKI_API = "https://en.wikipedia.org/w/api.php?";
     private static final String PROPERTY_ACTION = "action=query&";
     private static final String PROPERTY_CONTINUE = "continue=&";
@@ -129,12 +123,11 @@ public class WikiArtistInfoParser implements ParseCompleteListener {
     }
 
     public String getImageURL(String fileName) {
-        String digest = null;
-        String subDirectory = null;
+        String digest;
+        String subDirectory;
 
-        // replace blank spaces with underscore
         fileName = fileName.replaceAll(" ", "_");
-        fileName = fileName.replace("File:", ""); //remove preceding "File:" at .jpg filename
+        fileName = fileName.replace("File:", "");
         // generate MD5 for this image filename
         digest = md5Java(fileName);    // generate MD5 for this image filename
         subDirectory = digest.charAt(0) +   // construct subdirectories to image
@@ -154,9 +147,8 @@ public class WikiArtistInfoParser implements ParseCompleteListener {
         return imageURL;
     }
 
-    // Generate md5
     public static String md5Java(String message){
-        String digest = null;
+        String digest;
 
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
