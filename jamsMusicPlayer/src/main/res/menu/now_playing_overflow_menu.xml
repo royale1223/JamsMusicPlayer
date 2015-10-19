@@ -14,6 +14,10 @@
 	    android:title="@string/show_embedded_lyrics"/>
 
     <item
+        android:id="@+id/wiki_artist_info"
+        android:title="Artist info" />
+
+    <item
         android:id="@+id/current_queue"
         android:title="@string/current_queue" />
 

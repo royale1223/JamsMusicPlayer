@@ -51,6 +51,8 @@ import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.AudioFileIO;
 import org.jaudiotagger.tag.FieldKey;
 import org.jaudiotagger.tag.Tag;
+import com.jams.music.player.Dialogs.WikiArtistInfoDialog;
+
 
 import java.io.File;
 
@@ -225,6 +227,16 @@ public class PlaylistPagerFragment extends Fragment implements AlbumArtLoadedLis
                     goToPopupMenu.inflate(R.menu.show_more_menu);
                     goToPopupMenu.setOnMenuItemClickListener(goToMenuClickListener);
                     goToPopupMenu.show();
+                    break;
+                case R.id.wiki_artist_info:
+                    WikiArtistInfoDialog wikiDialog = (WikiArtistInfoDialog)getActivity().getSupportFragmentManager().findFragmentByTag("wikiArtistInfo");
+                    if(wikiDialog == null) {
+                        wikiDialog = new WikiArtistInfoDialog();
+                        wikiDialog.onCreate(null);
+                    }
+                    String artist = ((Common)getActivity().getApplicationContext()).getService().getCurrentSong().getArtist();
+                    FragmentTransaction frag = getActivity().getSupportFragmentManager().beginTransaction();
+                    wikiDialog.search(artist, frag);
                     break;
             }
 
