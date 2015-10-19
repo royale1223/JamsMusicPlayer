@@ -1,7 +1,3 @@
-include ':circularImageView', ':picasso'
-include ':quickScroll'
-include ':dragsortlistviewlibrary'
 include ':licensesdialoglibrary'
 include ':velocityviewpagerlibrary'
-include ':viewpagerindicatorlibrary'
 include ':jamsMusicPlayer'
